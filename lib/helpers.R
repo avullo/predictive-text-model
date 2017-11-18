@@ -1,6 +1,29 @@
 # Data Science Capstone Project
 #
 # Utility functions
+#
+# TODO
+# Add profanity filtering, list from https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
+# but must detect language first, or specify language as parameter
+#
+# NOTE
+# Translate cyrillic alphabet to latin, package string1
+# stri_trans_general('ДРАГИ', 'latin')
+#
+
+library(tokenizers)
+
+# tokenize_file
+# a function that takes a file as input and returns a tokenized version of it
+tokenize_file <- function(fname) {
+  # NOTE: could use stopifnot for a more concise version
+  if(!file.exists(fname)) {
+    stop(paste("Cannot read file ", fname, sep = " "))
+  }
+
+  text <- paste(readLines(fname), collapse = " ")
+  tokenize_words(text)
+}
 
 # get the number of lines in a file
 numberOfLines <- function(fname) {
@@ -33,15 +56,6 @@ numberOfEmptyLines <- function(fname) {
 #
 # WARN
 #   works with files with no or a very few empty lines 
-#
-# TODO
-# Add profanity filtering, list from https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words
-# but must detect language first, or specify language as parameter
-#
-# NOTE
-# Translate cyrillic alphabet to latin, package string1
-# stri_trans_general('ДРАГИ', 'latin')
-#
 sampleFile <- function(ifname, ofname, perc = 1, append = TRUE, seed = 1234) {
   nlines <- numberOfLines(ifname)
   
