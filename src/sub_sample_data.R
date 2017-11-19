@@ -15,6 +15,12 @@ library(kimisc) # for thisfile() to determine the path of the currently running 
 this.file <- try(system(paste("realpath", thisfile(), sep = " "), intern = TRUE))
 setwd(file.path(dirname(this.file), '..'))
 
+# read configuration, i.e. seed and perc subsampling
+library(yaml)
+config <- yaml.load_file("config.yml")
+seed <- config$seed
+perc <- config$subsampling$perc
+
 # access file sampling and other util functions
 source('lib/helpers.R')
 
@@ -43,5 +49,20 @@ if(!opt$language %in% c("de","en","fi","ru")) {
 
 if(!opt$type %in% c("blogs","news","twitter","all")) {
   print_help(opt_parser)
-  stop("Dataset type must be either blogs|news|twitter", call.=FALSE);
+  stop("Dataset type must be either blogs|news|twitter|all", call.=FALSE);
+}
+
+# data directory, depends on language
+data_dir <- switch(which(c("de","en","fi","ru") == opt$language), "de_DE", "en_US", "fi_FI", "ru_RU")
+data_dir <- file.path('data', 'final', data_dir)
+# this is available with R >= 3.2.0
+stopifnot(dir.exists(data_dir))
+
+if(opt$type == "all") {
+  sampleFiles(data_dir, opt$out, perc = perc, append = TRUE, seed = seed)
+} else {
+  prefix <- switch(which(c("de","en","fi","ru") == opt$language), "de_DE", "en_US", "fi_FI", "ru_RU")
+  input <- file.path(data_dir, paste0(prefix, '.', opt$type, '.txt'))
+  stopifnot(file.exists(input))
+  sampleFile(input, opt$out, perc = perc, append = TRUE, seed = seed)
 }
