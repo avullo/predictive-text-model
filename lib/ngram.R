@@ -1,4 +1,6 @@
 library(tokenizers)
+library(tidyverse)
+library(tidytext)
 # library(R.utils)
 # library(data.table)
 
@@ -12,4 +14,11 @@ tokenizer <- function(ng) {
   #' @return a vector containing the ngrams
   t <- function(x)
     unlist(tokenize_ngrams(x, n = ng))
+}
+
+tokenize_into_ngram <- function(data, size = 1) {
+  stopifnot(!is.null(data$text))
+  
+  data %>%
+    unnest_tokens(w, text, token = "ngrams", n = size)
 }
