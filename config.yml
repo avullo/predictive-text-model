@@ -4,14 +4,21 @@ locale : en_US
 
 data :
   dir : data
+  source : blogs,news,twitter
   raw :
     dir   : raw
     url   : https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip
     local : Coursera-SwiftKey.zip
+  sample : 5
   clean :
     dir : clean
 
-subsampling:
-  perc : 1
+preprocess :
+  stem : 0
+  stopwords : 0
 
+model :
+  train : 70
+  validation : 15
+  test : 15
 
