@@ -13,6 +13,10 @@
 
 library(tokenizers)
 
+assert <- function (expr, error) {
+  if (! expr) stop(error, call. = FALSE)
+}
+
 # tokenize_file
 # a function that takes a file as input and returns a tokenized version of it
 tokenize_file <- function(fname) {
