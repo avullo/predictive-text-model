@@ -10,12 +10,10 @@ data :
     url   : https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip
     local : Coursera-SwiftKey.zip
   sample : 5
-  processed :
+  process :
+    stem : 0
+    stopwords : 0
     dir : processed
-
-preprocess :
-  stem : 0
-  stopwords : 0
 
 model :
   dir : model
