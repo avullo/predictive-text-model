@@ -12,11 +12,29 @@
 #
 
 library(tokenizers)
+library(XML)
+library(dplyr)
 
 assert <- function (expr, error) {
   if (! expr) stop(error, call. = FALSE)
 }
 
+# get the mapping of common Internet jargon to its meaning
+internet_jargon <- function() {
+  fileUrl <- "http://www.netlingo.com/acronyms.php"
+  doc <- htmlTreeParse(fileUrl, useInternal = TRUE)
+  xmlBodyNodes <- xpathSApply(doc, "//li", xmlChildren)[111:2618]
+   
+  jargon <- data.frame(attr  = unlist(lapply(xmlBodyNodes, function(el) xmlValue(el$span))), 
+                       value = unlist(lapply(xmlBodyNodes, function(el) xmlValue(el$text))))
+  
+  # remove cases conflicting with puncuation and other things
+  jargon <- jargon[-which(jargon$attr %in% c('!','?','@')),]
+  
+  # convert to lower case both attributes and values
+  jargon %>% mutate_all(funs(tolower))
+}
+  
 # tokenize_file
 # a function that takes a file as input and returns a tokenized version of it
 tokenize_file <- function(fname) {
