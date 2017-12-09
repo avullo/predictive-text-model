@@ -11,7 +11,7 @@ this.file <- normalizePath(thisfile())
 setwd(file.path(dirname(this.file), '..'))
 loginfo(sprintf("Set working directory to %s", getwd()))
 
-source("lib/helpers.R")
+source("lib/preprocess.R")
 
 loginfo("Reading configuration")
 library(yaml)
@@ -29,9 +29,9 @@ sample_data_fname <- file.path(raw_data_dir, paste(locale, '.sample.', sample_pe
 assert(file.exists(sample_data_fname), 
        sprintf("sample data file %s does not exist", sample_data_fname))
 
-# TODO
 # process sample data
-# corpus <- readRDS(sample_data_fname)
+corpus <- readRDS(sample_data_fname)
+processed_corpus <- preprocess(corpus, stem = config$data$process$stem, stopwords = config$data$process$stopwords)
 
 # create processed data dir if not exist
 processed_data_dir <- file.path(config$data$dir, config$data$process$dir)
