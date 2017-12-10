@@ -19,8 +19,9 @@ assert <- function (expr, error) {
   if (! expr) stop(error, call. = FALSE)
 }
 
-# get the mapping of common Internet jargon to its meaning
-internet_jargon <- function() {
+# get the dictionary of common Internet acronyms and shorthands
+# use netlingo resource
+jargon_dictionary <- function() {
   fileUrl <- "http://www.netlingo.com/acronyms.php"
   doc <- htmlTreeParse(fileUrl, useInternal = TRUE)
   xmlBodyNodes <- xpathSApply(doc, "//li", xmlChildren)[111:2618]
