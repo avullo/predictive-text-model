@@ -34,7 +34,7 @@ internet_jargon <- function() {
   # convert to lower case both attributes and values
   jargon %>% mutate_all(funs(tolower))
 }
-  
+
 # tokenize_file
 # a function that takes a file as input and returns a tokenized version of it
 tokenize_file <- function(fname) {
