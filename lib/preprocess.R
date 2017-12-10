@@ -19,10 +19,10 @@ strongwords <- strong_words()
 # TODO
 # stemming and stopwords
 preprocess <- function(txt, stem = F, stopwords = F) {
-  process_numbers(txt)      %>% # TODO
-     process_emails()       %>% # TODO
+  process_numbers(txt)      %>% # TEST
+     process_emails()       %>%
      process_urls()         %>% # TODO
-     process_twitter()      %>% # TODO
+     process_twitter()      %>%
      process_slang()        %>% 
      process_profanity()    %>% # TODO
      process_contractions() %>% # TODO
@@ -30,17 +30,19 @@ preprocess <- function(txt, stem = F, stopwords = F) {
 }
 
 process_numbers <- function(txt) {
-  gsub("\\s[0-9]+([,\\.]?[0-9]+)?\\s", " _num_ ", txt)
+  # consider blanks to discard other cases, e.g. telephone numbers
+  gsub("[[:blank:]][0-9]+([,\\.]?[0-9]+)?[:blank:]", " _num_ ", txt)
 }
 
 process_emails <- function(txt) {
   # the simplest regex possible, match also invalid email addresses
-  gsub("\\s\\w+[-+\\.]*\\[?\\w+@.+\\.\\w+\\]?", " _email_", txt)
-  # gsub("\\w*@\\w*\\.\\w*", " _email_ ", txt, perl = TRUE)
+  gsub("\\w+[-+\\.]*\\[?\\w+@.+\\.\\w+\\]?", " _email_ ", txt)
 }
 
+# TODO
 process_urls <- function(txt) {
-  gsub("\\b([a-z]{3,6}://)?([\\0-9a-z\\-]+\\.)+([a-z]{2,6})+(/[\\0-9a-z\\?\\=\\&\\-_]*)*", "_url_", txt)
+  txt
+  # gsub("\\b([a-z]{3,6}://)?([\\0-9a-z\\-]+\\.)+([a-z]{2,6})+(/[\\0-9a-z\\?\\=\\&\\-_]*)*", "_url_", txt)
 }
 
 process_twitter <- function(txt) {
@@ -50,9 +52,9 @@ process_twitter <- function(txt) {
   # {} and use . as a data "marker".
   # https://stackoverflow.com/questions/39997273/r-combine-several-gsub-function-ina-pipe
   
-  gsub("(\\#[[:alnum:]]+)", "_hashtag_", txt)         %>% # hash tags
-    { gsub("\\@\\w*[[:alnum]]+\\w*", "_twname_", .) } %>% # twitter names
-    { gsub("\\b(rt|RT)\\b", " ", .) }                     # remove retweets
+  gsub("\\#[[:alnum:]]+", "_hashtag_", txt) %>% # hash tags
+    # { gsub("(^|[[:blank:]])\\@[[:alnum:]]+[[:blank:]]", "_twitter_", .) } %>% # twitter names
+    { gsub("\\b(rt|RT)\\b", " ", .) }           # remove retweets
 }
 
 # Process some common Internet shorthand
@@ -89,7 +91,7 @@ process_slang <- function(txt) {
 
 # TODO
 process_profanity <- function(txt) {
-  txt 
+  txt
 }
 
 # TODO
