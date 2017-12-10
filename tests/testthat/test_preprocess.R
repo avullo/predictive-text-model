@@ -17,3 +17,11 @@ test_that("Slang filter", {
   expect_that(process_slang("Come on u lazy boy, wake up b4 it's t late and don't forget to b nice"),
               equals("Come on you lazy boy, wake up before it's too late and don't forget to be nice"))
 })
+
+test_that("Strong words", {
+  strong_words <- strong_words()
+  
+  expect_that(any(str_detect(strong_words, "negro")), is_true())
+  expect_that(any(str_detect(strong_words, "neonazi")), is_true())
+  expect_that(any(str_detect(strong_words, "nudity")), is_true())
+})

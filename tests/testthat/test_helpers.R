@@ -1,7 +1,7 @@
 context("Various helper functions")
 
 test_that("Internet jargon", {
-  jargon <- internet_jargon()
+  jargon <- jargon_dictionary()
   
   # test common expressions
   expect_that(jargon[which(jargon$attr == '2b'),"value"], equals("to be"))
