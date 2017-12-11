@@ -31,8 +31,7 @@ preprocess <- function(txt, stem = F, stopwords = F) {
 }
 
 process_numbers <- function(txt) {
-  # consider blanks to discard other cases, e.g. telephone numbers
-  gsub("[[:blank:]][0-9]+([,\\.]?[0-9]+)?[:blank:]", " _num_ ", txt)
+  gsub("([0-9]+([,\\.]?[0-9]+)?)", " _num_ ", txt)
 }
 
 process_emails <- function(txt) {

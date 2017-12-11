@@ -1,7 +1,11 @@
 context("Preprocessing text corpus")
 
 test_that("Number Filtering", {
+  with_numbers <- c("Simple number 50 in the middle", "100.26 is at the start", "And this one is at the end 34,6")
   
+  for (string in with_numbers) {
+    expect_that(str_detect(process_numbers(string), " _num_ "), is_true())
+  }
 })
 
 test_that("Email Filtering", {
