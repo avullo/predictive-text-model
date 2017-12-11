@@ -19,14 +19,15 @@ strongwords <- strong_words()
 # TODO
 # stemming and stopwords
 preprocess <- function(txt, stem = F, stopwords = F) {
-  process_numbers(txt)      %>% # TEST
-     process_emails()       %>%
-     process_urls()         %>% # TODO
-     process_twitter()      %>%
-     process_slang()        %>% 
-     process_profanity()    %>% # TODO
-     process_contractions() %>% # TODO
-     process_punctuation()      # TEST
+  stri_trans_tolower(txt)  %>% # lower case 
+    process_numbers()      %>% # TEST
+    process_emails()       %>%
+    process_urls()         %>% # TODO
+    process_twitter()      %>%
+    process_slang()        %>% 
+    process_profanity()    %>% # TODO
+    process_contractions() %>% # TODO
+    process_punctuation()      # TEST
 }
 
 process_numbers <- function(txt) {
