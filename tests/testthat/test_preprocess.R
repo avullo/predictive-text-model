@@ -10,9 +10,10 @@ test_that("Number Filtering", {
 
 test_that("Email Filtering", {
   # valid email addresses: from https://blogs.msdn.microsoft.com/testing123/2009/02/06/email-address-test-cases
-  emails <- c("email@domain.com", "firstname.lastname@domain.com	", "email@subdomain.domain.com", "firstname+lastname@domain.com", "email@123.123.123.123",
-              "email@[123.123.123.123]", '"email"@domain.com', "1234567890@domain.com", "email@domain-one.com", "_______@domain.com", "email@domain.name",
-              "email@domain.co.jp", "firstname-lastname@domain.com")
+  emails <- c("email@domain.com", "firstname.lastname@domain.com", "email@subdomain.domain.com", "firstname+lastname@domain.com",
+              "email@123.123.123.123", "1234567890@domain.com", "email@domain-one.com", "_______@domain.com", "email@domain.name", 
+              "email@domain.co.jp", "firstname-lastname@domain.com",  "email@[123.123.123.123]") 
+              # This become too expensive to match --> '"email"@domain.com'
   template <- "This is a string with an %s in it"
   
   # test it detects emails
@@ -30,7 +31,11 @@ test_that("Email Filtering", {
 })
 
 test_that("URLs Filtering", {
-  
+  with_urls <- c("download file from http://example.com", "this is the link to my website https://www.google.com/ for more info",
+                 "this link to ftp://www.example.org/community/mail/view.php?f=db/6463 gives more info")
+  for (with_url in with_urls) {
+    expect_that(str_detect(process_urls(with_url), " _url_ "), is_true())
+  }
 })
 
 test_that("Twitter Filtering", {

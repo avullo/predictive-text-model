@@ -20,9 +20,9 @@ strongwords <- strong_words()
 # stemming and stopwords
 preprocess <- function(txt, stem = F, stopwords = F) {
   stri_trans_tolower(txt)  %>% # lower case 
-    process_numbers()      %>% # TEST
+    process_numbers()      %>% 
     process_emails()       %>%
-    process_urls()         %>% # TODO
+    process_urls()         %>%
     process_twitter()      %>%
     process_slang()        %>% 
     process_profanity()    %>% # TODO
@@ -39,10 +39,8 @@ process_emails <- function(txt) {
   gsub("\\w+[-+\\.]*\\[?\\w+@.+\\.\\w+\\]?", " _email_ ", txt)
 }
 
-# TODO
 process_urls <- function(txt) {
-  txt
-  # gsub("\\b([a-z]{3,6}://)?([\\0-9a-z\\-]+\\.)+([a-z]{2,6})+(/[\\0-9a-z\\?\\=\\&\\-_]*)*", "_url_", txt)
+  gsub('(f|ht)tp\\S+\\s*'," _url_ ", txt)
 }
 
 process_twitter <- function(txt) {
