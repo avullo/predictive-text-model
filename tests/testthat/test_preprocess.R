@@ -52,6 +52,11 @@ test_that("Slang Filtering", {
               equals("Come on you lazy boy, wake up before it's too late and don't forget to be nice"))
 })
 
+test_that("Contraction Filtering", {
+  expect_that(process_contractions("i'd rather go for what aren't things normally experienced. who'd've known that? you know, we'll go there"),
+              equals("i would rather go for what are not things normally experienced. who would have known that? you know, we will go there"))
+})
+
 test_that("Strong words", {
   strong_words <- strong_words()
   

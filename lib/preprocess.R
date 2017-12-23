@@ -92,9 +92,35 @@ process_profanity <- function(txt) {
   txt
 }
 
-# TODO
+# TODO: process possessive forms 
 process_contractions <- function(txt) {
-  txt
+  # List of English contractions: https://en.wikipedia.org/wiki/Wikipedia:List_of_English_contractions
+  gsub("ain't", "am not", txt) %>%
+  { gsub("aren't", "are not", .) } %>% { gsub("can't", "cannot", .) } %>% { gsub("could've", "could have", .) } %>%
+  { gsub("couldn't", "could not", .) } %>% { gsub("could of", "could have", .) } %>% { gsub("didn't", "did not", .) } %>% { gsub("doesn't", "does not", .) } %>%
+  { gsub("don't ", "do not", .) } %>% { gsub("gonna", "going to", .) } %>% { gsub("gotta", "got to", .) } %>% { gsub("hadn't", "had not", .) } %>%
+  { gsub("hasn't", "has not", .) } %>% { gsub("haven't", "have not", .) } %>% { gsub("he'd", "he would", .) } %>% { gsub("he'll", "he will", .) } %>%
+  { gsub("he's", "he is", .) } %>% { gsub("how'd ", "how would", .) } %>% { gsub("how'll", "how will", .) } %>% { gsub("how's", "how has", .) } %>%
+  { gsub("i'd", "i would", .) } %>% { gsub("i'll", " i will", .) } %>% { gsub("i'm", "i am", .) } %>% { gsub("i've", "i have", .) } %>%
+  { gsub("isn't", "is not", .) } %>% { gsub("it'd", "it would", .) } %>% { gsub("it'll", "it will", .) } %>% { gsub("it's", "it is", .) } %>%
+  { gsub("let's", "let us", .) } %>% { gsub("mayn't", "may not", .) } %>% { gsub("may've", "may have", .) } %>% { gsub("mightn't", "might not", .) } %>%
+  { gsub("might've", "might have", .) } %>% { gsub("mustn't", "must not", .) } %>% { gsub("must've", "must have", .) } %>% { gsub("needn't", "need not", .) } %>%
+  { gsub("o' clock", "of the clock", .) } %>% { gsub("ol'", "old", .) } %>% { gsub("oughtn't", "ought not", .) } %>% { gsub("shan't", "shall not", .) } %>%
+  { gsub("she'd", "she would", .) } %>% { gsub("should've", "should have", .) } %>% { gsub("shouldn't", "should not", .) } %>% { gsub("should of", " should have", .) } %>%
+  { gsub("somebody's", "somebody is", .) } %>% { gsub("someone's", "someone has", .) } %>% { gsub("something's", "something is", .) } %>% { gsub("that'll", "that will", .) } %>%
+  { gsub("that're", "that are", .) } %>% { gsub("that's", "that is", .) } %>% { gsub("that'd", "that would", .) } %>% { gsub("there'd", "there would", .) } %>%
+  { gsub("there're", "there are", .) } %>% { gsub("there's", "there is", .) } %>% { gsub("these're", "these are", .) } %>% { gsub("they'd", "they would", .) } %>%
+  { gsub("they'll", "they will", .) } %>% { gsub("they're", "they are", .) } %>% { gsub("they've", "they have", .) } %>% { gsub("this's", "this is", .) } %>%
+  { gsub("those're", "those are", .) } %>% { gsub("'tis", "it is", .) } %>% { gsub("'twas", "it was", .) } %>% { gsub("'twasn't", "it was not", .) } %>%
+  { gsub("wasn't", "was not", .) } %>% { gsub("we'd", "we would", .) } %>% { gsub("we'd've", "we would have", .) } %>% { gsub("we'll", "we will", .) } %>%
+  { gsub("we're", "we are", .) } %>% { gsub("we've", "we have", .) } %>% { gsub("weren't", "were not", .) } %>% { gsub("what'd", "what did", .) } %>%
+  { gsub("what'll", "what will", .) } %>% { gsub("what're", "what are", .) } %>% { gsub("what's", "what is", .) } %>% { gsub("what've", "what have", .) } %>%
+  { gsub("when's", "when is", .) } %>% { gsub("where'd", "where did", .) } %>% { gsub("where're", "where are", .) } %>% { gsub("where's ", "where is", .) } %>%
+  { gsub("where've", "where have", .) } %>% { gsub("which's", "which is", .) } %>% { gsub("who'd", "who would", .) } %>% { gsub("who'd've", "who would have", .) } %>%
+  { gsub("who'll", "who will", .) } %>% { gsub("who're", "who are", .) } %>% { gsub("who's", "who is", .) } %>% { gsub("who've", "who have", .) } %>%
+  { gsub("why'd", "why did", .) } %>% { gsub("why're", "why are", .) } %>% { gsub("why's", "why is", .) } %>% { gsub("won't", "will not", .) } %>%
+  { gsub("would've", "would have", .) } %>% { gsub("wouldn't", "would not", .) } %>% { gsub("y'all", "you all", .) } %>% { gsub("you'd", "you would", .) } %>%
+  { gsub("you'll", "you will", .) } %>% { gsub("you're", "you are", .) } %>% { gsub("you've", "you have", .) }
 }
 
 # TEST
