@@ -1,0 +1,68 @@
+Potentially interesting R tools
+===============================
+
+Frameworks
+----------
+
+- tm
+a comprehensive text mining framework for R. The Journal of Statistical Software article Text Mining Infrastructure in R gives a detailed overview and presents techniques for count-based analysis methods, text clustering, text classification and string kernels. 
+
+- RcmdrPlugin.temis
+an Rcommander plug-in providing an integrated solution to perform a series of text mining tasks such as importing and cleaning a corpus, and analyses like terms and documents counts, vocabulary tables, terms co-occurrences and documents similarity measures, time series analysis, correspondence analysis and hierarchical clustering. 
+
+- openNLP
+an R interface to OpenNLP , a collection of natural language processing tools including a sentence detector, tokenizer, pos-tagger, shallow and full syntactic parser, and named-entity detector, using the Maxent Java package for training and using maximum entropy models. 
+
+- RWeka
+interface to Weka which is a collection of machine learning algorithms for data mining tasks written in Java. Especially useful in the context of natural language processing is its functionality for tokenization and stemming.
+
+- tidytext
+provides means for text mining for word processing and sentiment analysis using dplyr, ggplot2, and other tidy tools. 
+
+Words (lexical DBs, keyword extraction, string manipulation, stemming) 
+----------------------------------------------------------------------
+
+- R's base package
+provides a rich set of character manipulation routines. See help.search(keyword = "character", package = "base") for more information on these capabilities. 
+
+- tau
+basic string manipulation and analysis routines needed in text processing such as dealing with character encoding, language, pattern counting, and tokenization.
+
+- SnowballC
+provides exactly the same API as Rstem, but uses a slightly different design of the C libstemmer library from the Snowball project. It also supports two more languages. 
+
+- stringi
+R language wrappers to the International Components for Unicode (ICU) library and allows for: conversion of text encodings, string searching and collation in any locale, Unicode normalization of text, handling texts with mixed reading direction (e.g., left to right and right to left), and text boundary analysis (for tokenizing on different aggregation levels or to identify suitable line wrapping locations). 
+
+- Rstem
+an alternative interface to a C version of Porter's word stemming algorithm. 
+
+- KoNLP
+provides a collection of conversion routines (e.g. Hangul to Jamos), stemming, and part of speech tagging through interfacing with the Lucene's HanNanum analyzer. In version 0.0-8.0, the documentation is sparse and still needs some help. 
+
+- zipfR
+offers some statistical models for word frequency distributions. The utilities include functions for loading, manipulating and visualizing word frequency data and vocabulary growth curves. The package also implements several statistical models for the distribution of word frequencies in a population.
+
+- mscsweblm4r 
+provides an interface to the Microsoft Cognitive Services Web Language Model API and can be used to calculate the probability for a sequence of words to appear together, the conditional probability that a specific word will follow an existing sequence of words, get the list of words (completions) most likely to follow a given sequence of words, and insert spaces into a string of words adjoined together without any spaces (hashtags, URLs, etc.). 
+
+- mscstexta4r 
+provides an interface to the Microsoft Cognitive Services Text Analytics API and can be used to perform sentiment analysis, topic detection, language detection, and key phrase extraction.
+
+- tokenizers 
+helps split text into tokens, supporting shingled n-grams, skip n-grams, words, word stems, sentences, paragraphs, characters, lines, and regular expressions. 
+
+Semantics
+---------
+
+- corpora
+utility functions for the statistical analysis of corpus frequency data.
+
+- text2vec
+tools for text vectorization, topic modeling (LDA, LSA), word embeddings (GloVe), and similarities.
+
+Pragmatics
+----------
+
+- quanteda
+supports quantitative analysis of textual data. 
