@@ -1,0 +1,29 @@
+1. The en_US.blogs.txt file is how many megabytes?
+
+200
+
+2. The en_US.twitter.txt has how many lines of text?
+
+Over 2 million
+
+3. What is the length of the longest line seen in any of the three en_US data sets?
+
+Over 40 thousand in the blogs data set
+
+4. In the en_US twitter data set, if you divide the number of lines where the word "love" (all lowercase) occurs by the number of lines the word "hate" (all lowercase) occurs, about what do you get?
+
+$ grep -co "love" final/en_US/en_US.twitter.txt
+90956
+
+$ grep -co "hate" final/en_US/en_US.twitter.txt
+22138
+
+90956 / 22138 ~ 4
+
+5. The one tweet in the en_US twitter data set that matches the word "biostats" says what?
+
+They haven't studied for their biostats exam
+
+6. How many tweets have the exact characters "A computer once beat me at chess, but it was no match for me at kickboxing". (I.e. the line matches those characters exactly.)
+
+3
