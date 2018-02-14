@@ -49,9 +49,9 @@ twitters <- readLines(file_paths$orig[3], skipNul = TRUE)
 load(file=file.path(data_dir, "en_US.Rdata"))
 ```
 
-## Basic Data Summary
+## Data Summary
 
-Here we describe basic data summaries in terms of word and line counts for each of the three files:
+Here we describe basic data summaries in terms of word and line counts for each of the three files of each source:
 
 ```{r, echo = TRUE}
 wordcount <- function(textlines) { sum(str_count(textlines, "\\S+")) }
@@ -68,7 +68,7 @@ The three sources bring about the same number of words. The blogs and news sourc
 
 ## Preprocessing and Loading the Data
 
-This exploratory analysis is performed on a random sample which amounts at 5% of the original data. The code used for sampling can be found [here]().
+This exploratory analysis is performed on a random sample which amounts at 5% of the original data. The code used for sampling can be found in the Appendix.
 
 ```{r sampling, eval = FALSE}
 seed <- 2791
@@ -80,9 +80,6 @@ for(i in 1:length(file_paths$sample)) {
     sampleFile(orig, sample, perc = 1, append = TRUE, seed = seed)
   }
 }
-# samples <- list(blogs = readLines(as.character(file_paths$sample[1]), skipNul = TRUE),
-#                 news = readLines(as.character(file_paths$sample[2]), skipNul = TRUE),
-#                 twitter = readLines(as.character(file_paths$sample[3]), skipNul = TRUE))
 
 samples <- bind_rows(data.frame(text = readLines(as.character(file_paths$sample[1]), skipNul = TRUE), source = "blogs"),
                      data.frame(text = readLines(as.character(file_paths$sample[2]), skipNul = TRUE), source = "news"),
@@ -95,10 +92,12 @@ load(file=file.path("..", "data", "en_US_sample.Rdata"))
 
 Finally, we load the collected list of profane words for the English language:
 
-```{r load_into_tm}
+```{r load_into_tm, echo = FALSE}
 # corpus <- Corpus(VectorSource(samples))
 # rm(samples)
+```
 
+```{r load_bad_words}
 badwords <- readLines("https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en")
 badwords <- data.frame(word = badwords[-length(badwords)])  # last element read is empty string
 ```
@@ -107,28 +106,28 @@ badwords <- data.frame(word = badwords[-length(badwords)])  # last element read 
 
 ### Tokenizing and Filtering
 
-Text is converted to lowercase, and then numbers, punctuaction and high-frequency stop words are removed, including  URLs and bad words:
+Text is converted to lowercase, and then numbers, punctuaction, high-frequency (i.e. stop words), profane words and twitter specific elements are removed:
 
 ```{r filtering}
 data(stop_words)
-
-# TODO: remove non words
 
 corpus <- samples %>% 
   unnest_tokens(word, text) %>% 
   anti_join(stop_words) %>% # remove stop words
   filter(!str_detect(word, "^\\d+\\.*\\d*$")) %>% # remove numbers, or maybe "mutate(word = str_extract(word, "[a-z]+")) %>%"
-  anti_join(badwords) # profanity filtering
-# TODO remove URLs, <3 letter words?
+  anti_join(badwords) %>% # profanity filtering
+  filter(!str_detect(word, "^rt|lol|[@#]\\S+$")) # filter out re-tweets, hash tags and twitter handles and also common jargon
+```
 
-# filtered_corpus <- tm_map(corpus, content_transformer(tolower))
-# filtered_corpus <- tm_map(filtered_corpus, removeNumbers)
-# filtered_corpus <- tm_map(filtered_corpus, removePunctuation)
-# filtered_corpus <- tm_map(filtered_corpus, removeWords, stopwords("english"))
-# filtered_corpus <- tm_map(filtered_corpus, content_transformer(function(x) gsub("http:[[:alnum:]]","", x)))
-# filtered_corpus <- tm_map(filtered_corpus, removeWords, badwords)
-# # hash tags and twitter handles are removed spcifically from the twitter corpus
-# filtered_corpus <- tm_map(filtered_corpus, content_transformer(function(x) gsub("[@#]\\S+","", x)))
+```{r tm_filtering, echo = FALSE, eval = FALSE}
+filtered_corpus <- tm_map(corpus, content_transformer(tolower))
+filtered_corpus <- tm_map(filtered_corpus, removeNumbers)
+filtered_corpus <- tm_map(filtered_corpus, removePunctuation)
+filtered_corpus <- tm_map(filtered_corpus, removeWords, stopwords("english"))
+filtered_corpus <- tm_map(filtered_corpus, content_transformer(function(x) gsub("http:[[:alnum:]]","", x)))
+filtered_corpus <- tm_map(filtered_corpus, removeWords, badwords)
+# hash tags and twitter handles are removed spcifically from the twitter corpus
+filtered_corpus <- tm_map(filtered_corpus, content_transformer(function(x) gsub("[@#]\\S+","", x)))
 ```
 
 ### Word Frequency Distribution
@@ -143,7 +142,7 @@ corpus %>%
   ggplot(aes(word, n)) + geom_col() + xlab(NULL) + coord_flip()
 ```
 
-This is the distribution of word frequencies
+This is the distribution of word frequencies:
 
 ```{r word_frequency_distribution}
 corpus %>%
@@ -152,7 +151,7 @@ corpus %>%
   ggplot(aes(n/total)) + geom_histogram(show.legend = FALSE) + xlim(NA,0.0006)
 ```
 
-These type of long-tailed distributions are expected in any given corpus of natural language, a classic example of the Zip's Law (reference?), with many words that occur rarely and fewer words that occur frequently. This is occurring even after removing the most common (i.e. stop) words used in the language.
+These type of long-tailed distributions are expected in any given corpus of natural language, a classic example of the Zip's Law, with many words that occur rarely and fewer words that occur frequently. This is occurring even after removing the most common (i.e. stop) words used in the language.
 
 Here we plot the cumulative frequency of the frequency sorted dictionary extracted from the filtered corpus:
 
@@ -163,7 +162,7 @@ corpus %>%
   ggplot(aes(rank, cumsum(frequency))) + geom_line() + scale_x_continuous(breaks=seq(0,50000,2500)) + scale_y_continuous(breaks=seq(0,1,.1))
 ```
 
-Interestingly, and in line with the previous findings, we can see how we just need a small fraction of the dictionary in order to cover significant portions of all word occurrences: ~4% (~2000) of unqiue words to cover 50%, and ~37% (~19000) of unique words to cover 90% of all word instances in the corpus.
+Interestingly, and in line with the previous findings, we can see how we just need a small fraction of the dictionary in order to cover significant portions of all word occurrences: ~4% (~2000) of unique words to cover 50%, and ~37% (~19000) of unique words to cover 90% of all word instances in the corpus.
 
 Let's find out if there are significant differences among the three sources of text considered here:
 
@@ -180,7 +179,7 @@ ggplot(source_words, aes(n/total), fill = source) +
 
 These plots exhibit similar distributions for all the sources. 
 
-## n-grams Frequency Analysis
+## NGrams Frequency Analysis
 
 ### Bigrams
 
@@ -249,9 +248,36 @@ trigrams %>%
 
 ## Appendix
 
-### Efficient Random Sampling from Text Files
+### Number of Lines in a File
 
-```{r}
+```{r file_num_lines}
+# get the number of lines in a file
+numberOfLines <- function(fname) {
+  if(!file.exists(fname)) {
+    stop(paste("Cannot read file ", fname, sep = " "))
+  }
+  as.integer(strsplit(try(system(paste("wc", fname, sep = " "), intern = TRUE)), " +")[[1]][2])
+}
+```
+
+### Sample a Percentage of Lines in a File
+
+```{r sample_file}
+# sample a certain fraction of the lines of a file, and write them to an output file
+#
+# adapted from https://stat.ethz.ch/pipermail/r-help/2007-February/124812.html
+#
+# The basic premise with this approach below, is that you are in effect
+# creating a sequential file cache in an R object. Reading large chunks of
+# the source file into the cache. Then randomly selecting rows within the
+# cache and then writing out the selected rows.
+# Thus, if you can read 100,000 rows at once, you would have 9 reads of
+# the source file, and 9 writes of the target file.
+# The key thing here is to ensure that the offsets within the cache and
+# the corresponding random row values are properly set.
+#
+# WARN
+#   works with files with no or a very few empty lines 
 sampleFile <- function(ifname, ofname, perc = 1, append = TRUE, seed = 1234) {
   nlines <- numberOfLines(ifname)
   
