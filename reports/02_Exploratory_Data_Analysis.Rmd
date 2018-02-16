@@ -1,7 +1,7 @@
 ---
 title: "Predictive Text Modeling - Exploratory Data Analysis"
 author: "Alessandro Vullo"
-date: "20 November 2017"
+date: "16 February 2018"
 output: html_document
 ---
 
@@ -23,7 +23,7 @@ In this report, we develop an initial exploratory analysis of data which is perf
 
 ## Getting the Data
 
-The data is from a corpus called the HC corpora which collects text in several languages from different sources, namely blogs, news and twitter. The data can be downloaded from the Coursera web site (insert link). 
+The data is from a corpus called the HC corpora which collects text in several languages from different sources, namely blogs, news and twitter. The data can be downloaded from the [Coursera web site](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip). 
 
 For the purpose of this initial exploration, we focus on the American English section of the corpora, which provides data for the different sources in separate files. We first read in those files in character vectors: 
 
@@ -58,9 +58,14 @@ wordcount <- function(textlines) { sum(str_count(textlines, "\\S+")) }
 ```
 
 ```{r file_summary}
-data_summary <- data.frame(source = c("blogs", "news", "twitter"), `word count` = c(wordcount(blogs), wordcount(news), wordcount(twitters)), `line count` = c(length(blogs), length(news), length(twitters)))
+data_summary <- data.frame(source = c("blogs", "news", "twitter"), 
+                           `word count` = c(wordcount(blogs), 
+                                            wordcount(news), 
+                                            wordcount(twitters)), 
+                           `line count` = c(length(blogs), 
+                                            length(news), 
+                                            length(twitters)))
 
-# TODO: build and render table
 data_summary
 ```
 
@@ -68,7 +73,7 @@ The three sources bring about the same number of words. The blogs and news sourc
 
 ## Preprocessing and Loading the Data
 
-This exploratory analysis is performed on a random sample which amounts at 5% of the original data. The code used for sampling can be found in the Appendix.
+This exploratory analysis is performed on a random sample which amounts at 1% of the original data. The code used for sampling can be found in the Appendix.
 
 ```{r sampling, eval = FALSE}
 seed <- 2791
@@ -81,13 +86,16 @@ for(i in 1:length(file_paths$sample)) {
   }
 }
 
-samples <- bind_rows(data.frame(text = readLines(as.character(file_paths$sample[1]), skipNul = TRUE), source = "blogs"),
-                     data.frame(text = readLines(as.character(file_paths$sample[2]), skipNul = TRUE), source = "news"),
-                     data.frame(text = readLines(as.character(file_paths$sample[3]), skipNul = TRUE), source = "twitters"))
+samples <- bind_rows(data.frame(text = readLines(as.character(file_paths$sample[1]), 
+                                                 skipNul = TRUE), source = "blogs"),
+                     data.frame(text = readLines(as.character(file_paths$sample[2]), 
+                                                 skipNul = TRUE), source = "news"),
+                     data.frame(text = readLines(as.character(file_paths$sample[3]), 
+                                                 skipNul = TRUE), source = "twitters"))
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
-load(file=file.path("..", "data", "en_US_sample.Rdata"))
+load(file=file.path(data_dir, "en_US_sample.Rdata"))
 ```
 
 Finally, we load the collected list of profane words for the English language:
@@ -159,7 +167,9 @@ Here we plot the cumulative frequency of the frequency sorted dictionary extract
 corpus %>%
   count(word, sort = TRUE) %>%
   mutate(rank = row_number(), total = sum(n), frequency = n / total) %>%
-  ggplot(aes(rank, cumsum(frequency))) + geom_line() + scale_x_continuous(breaks=seq(0,50000,2500)) + scale_y_continuous(breaks=seq(0,1,.1))
+  ggplot(aes(rank, cumsum(frequency))) + geom_line() + 
+         scale_x_continuous(breaks=seq(0,50000,2500)) + 
+         scale_y_continuous(breaks=seq(0,1,.1))
 ```
 
 Interestingly, and in line with the previous findings, we can see how we just need a small fraction of the dictionary in order to cover significant portions of all word occurrences: ~4% (~2000) of unique words to cover 50%, and ~37% (~19000) of unique words to cover 90% of all word instances in the corpus.
@@ -186,7 +196,7 @@ These plots exhibit similar distributions for all the sources.
 Firstly, we tokenize by bi-grams:
 
 ```{r bigram_tokenizing}
-bigrams <- samples %>% 
+bigrams <- samples %>%
   unnest_tokens(bigram, text, token = "ngrams", n = 2)
 bigrams %>%
   count(bigram, sort = TRUE)
@@ -199,15 +209,16 @@ bigrams_filtered <-
   bigrams %>%
   separate(bigram, c("word1", "word2"), sep = " ") %>%
   filter(str_detect(word1, "^[a-z]+$") & str_detect(word2, "^[a-z]+$")) %>% 
-  filter(!word2 %in% stop_words$word & !word1 %in% stopwords$word) %>%
+  filter(!word2 %in% stop_words$word & !word1 %in% stop_words$word) %>%
   filter(!word1 %in% badwords$word & !word2 %in% badwords$word)
 dim(bigrams_filtered)
 ```
 
-After filtering, we end up with a total of 141402 bigrams. Let's examine their frequency:
+After filtering, we end up with a total of 146402 bigrams. Let's examine their frequency:
 
 ```{r}
 bigrams_filtered %>%
+  unite("bigram", c("word1","word2"), sep=" ") %>%
   count(bigram, sort = TRUE) %>%
   mutate(total = sum(n)) %>%
   ggplot(aes(n/total)) + geom_histogram(show.legend = FALSE) + xlim(NA,0.0002)
@@ -217,9 +228,10 @@ Not surprisingly, we get another right long-tailed distribution which is even mo
 
 ```{r}
 bigrams_filtered %>%
+  unite("bigram", c("word1","word2"), sep=" ") %>%
   count(bigram, sort = TRUE) %>%
   mutate(bigram = reorder(bigram,n)) %>%
-  top_n(20) %>%
+  top_n(25) %>%
   ggplot(aes(bigram, n)) + geom_col() + xlab(NULL) + coord_flip()
 ```
 
@@ -229,11 +241,11 @@ Interestengly, there are 6 US cities among the top frequent 25 bi-grams, the res
 
 Let's tokenize by tri-grams and inspect the most frequent ones. This time we don't filter out those containing stop-words as this would leave us with triplets with only very low frequencies.
 
-```{r bigram_tokenizing}
+```{r trigram_tokenizing}
 trigrams <- samples %>% 
   unnest_tokens(trigram, text, token = "ngrams", n = 3)
 trigrams %>%
-  count(trigram, sort = TRUE) %>%
+  count(trigram, sort = TRUE)
 ```
 
 There are nearly a million tri-grams, which together with bi-grams, shows approximately a quadratic increase in the number of parameters with respect to the dimension of the n-grams (n). Again, the set of the most frequent tri-grams is dominated by those containing common words.
@@ -246,11 +258,20 @@ trigrams %>%
   ggplot(aes(trigram, n)) + geom_col() + xlab(NULL) + coord_flip()
 ```
 
+## Predictive Text Modeling - Plan
+
+- Take the largest possible random sample considering memory/runtime computational constraints;
+- Split the sample data into sets for model estimation (training) and performance evaluation (testing/validation);
+- Devise suitable performance metrics;
+- Generate n-gram frequency tables ($n=1 \ldots 4$) from the training set and store them as efficiently as possible, e.g. serialised data table objects; consider reducing the size of the vocabulary;
+- Evaluate performance and runtime/size requirements of different strategies to handle unseen n-grams, i.e. smoothing, backoff;
+- Deploy a Shiny app using the model reaching the best compromise in terms and performance and computational requirements.
+
 ## Appendix
 
 ### Number of Lines in a File
 
-```{r file_num_lines}
+```{r file_num_lines, eval = FALSE}
 # get the number of lines in a file
 numberOfLines <- function(fname) {
   if(!file.exists(fname)) {
@@ -262,7 +283,7 @@ numberOfLines <- function(fname) {
 
 ### Sample a Percentage of Lines in a File
 
-```{r sample_file}
+```{r sample_file, eval = FALSE}
 # sample a certain fraction of the lines of a file, and write them to an output file
 #
 # adapted from https://stat.ethz.ch/pipermail/r-help/2007-February/124812.html
