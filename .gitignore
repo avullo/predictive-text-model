@@ -38,6 +38,7 @@ vignettes/*.pdf
 
 reports/*.html
 reports/*_cache
-
+reports/*_files
+reports/rsconnect
 *~
 src/*~
