@@ -12,6 +12,7 @@ setwd(file.path(dirname(this.file), '..'))
 loginfo(sprintf("Set working directory to %s", getwd()))
 
 source("lib/preprocess.R")
+source("lib/helpers.R")
 
 loginfo("Reading configuration")
 library(yaml)
@@ -22,13 +23,13 @@ stopifnot(locale == "en_US")
 
 sample_perc <- config$data$sample
 print(class(sample_perc))
-stopifnot(sample_perc > 0 & sample_perc <= 100) # , "Data sample perc must be a number > 0 and <= 100")
+assert(sample_perc > 0 & sample_perc <= 100, "Data sample perc must be a number > 0 and <= 100")
 loginfo(sprintf("Will use %s %d perc sample data", locale, sample_perc))
 
 # check existence of sampled data 
 raw_data_dir <- file.path(config$data$dir, config$data$raw$dir)
 sample_data_fname <- file.path(raw_data_dir, paste(locale, '.sample.', sample_perc, '.rds', sep = ""))
-stopifnot(file.exists(sample_data_fname)) # sprintf("sample data file %s does not exist", sample_data_fname))
+assert(file.exists(sample_data_fname), sprintf("sample data file %s does not exist", sample_data_fname))
 
 # process sample data
 corpus <- readRDS(sample_data_fname)
