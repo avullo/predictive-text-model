@@ -18,16 +18,17 @@ library(yaml)
 config <- yaml.load_file("config.yml")
 
 locale <- config$locale
+stopifnot(locale == "en_US")
 
 sample_perc <- config$data$sample
-assert(sample_perc > 0 & sample_perc <= 100, "Data sample perc must be a number > 0 and <= 100")
+print(class(sample_perc))
+stopifnot(sample_perc > 0 & sample_perc <= 100) # , "Data sample perc must be a number > 0 and <= 100")
 loginfo(sprintf("Will use %s %d perc sample data", locale, sample_perc))
 
 # check existence of sampled data 
 raw_data_dir <- file.path(config$data$dir, config$data$raw$dir)
 sample_data_fname <- file.path(raw_data_dir, paste(locale, '.sample.', sample_perc, '.rds', sep = ""))
-assert(file.exists(sample_data_fname), 
-       sprintf("sample data file %s does not exist", sample_data_fname))
+stopifnot(file.exists(sample_data_fname)) # sprintf("sample data file %s does not exist", sample_data_fname))
 
 # process sample data
 corpus <- readRDS(sample_data_fname)
@@ -43,6 +44,6 @@ if(!file.exists(processed_data_dir)) {
 # save processed sampled data to file
 processed_data_fname <- file.path(processed_data_dir, 
                                   paste(locale, '.sample.', sample_perc, '.rds', sep = ""))
-saveRDS(object = processed_corpus, file = procesed_data_fname)
+saveRDS(object = processed_corpus, file = processed_data_fname)
 
 loginfo("Done")
