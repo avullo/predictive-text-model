@@ -1,11 +1,13 @@
 # helper functions for processing, i.e cleaning, the data before tokenisation
 
 library(dplyr)
+library(stringi) # stri_trans_tolower
+library(SnowballC) # stemmer
 
 # special markers to signal the presence of numbers, sentence marks, emails, URLs, twitter tags/names
 # using underscores since we're using the tokenizers package which strips most of the non-alphanum
 # characters during tokenisation except underscores
-markers <- list(number = '_num_', email = '_email_', url = '_url_', hashtag = '_hashtag_', twname = '_twname_', profane = '_strong_', eos = '_eos_')
+markers <- list(number = '_num_', email = '_email_', url = '_url_', hashtag = '_hashtag_', twname = '_twitter_', profane = '_strong_', eos = '_eos_')
 
 # list of offensive/profane words
 strong_words <- function() {
@@ -16,18 +18,23 @@ strong_words <- function() {
 
 strongwords <- strong_words()
   
-# TODO
-# stemming and stopwords
+# TODO: stopwords?
 preprocess <- function(txt, stem = F, stopwords = F) {
   stri_trans_tolower(txt)  %>% # lower case 
+    stem()                 %>% # TEST
     process_numbers()      %>% 
     process_emails()       %>%
     process_urls()         %>%
     process_twitter()      %>%
     process_slang()        %>% 
     process_profanity()    %>% # TODO
-    process_contractions() %>% # TODO
+    process_contractions() %>%
     process_punctuation()      # TEST
+}
+
+# TEST
+stem <- function(txt) {
+  wordStem(txt)
 }
 
 process_numbers <- function(txt) {
@@ -87,7 +94,7 @@ process_slang <- function(txt) {
     { gsub("\\sya\\s", " you ", .) }
 }
 
-# TODO
+# TODO/TEST
 process_profanity <- function(txt) {
   txt
 }
